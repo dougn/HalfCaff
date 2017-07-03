@@ -1,4 +1,4 @@
-# HalfCaff
+# HalfCaff ![](media/halfcaff_disabled.iconset/icon_32x32.png) ![](media/halfcaff_off.iconset/icon_32x32.png) ![](media/halfcaff_on.iconset/icon_32x32.png)
 OSX Status Bar app to keep laptop from sleeping when Cisco VPN is connected.
 
 Building a full standalone app using [py2app](https://py2app.readthedocs.io/) can be complicated. 
