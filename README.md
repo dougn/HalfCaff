@@ -9,7 +9,7 @@ The only dependency is having Cisco AnyConnect installed.
 You can download, unzip, and move HalfCaff.app to your Applications folder to install. 
 HalfCaff has been tested on OSX 10.10 through OSX 10.12, but should work with older OSX 10 systems.
 
-![screen shot 1](media/ss1.png "screen shot 1") ![screen shot 2](media/ss2.png "screen shot 2")
+<img src="media/ss1.png" height="150"/> <img src="media/ss2.png" height="150"/>
 
 
 The Cisco Anyconnect VPN app with RSA token authentication has a problem. 
@@ -71,7 +71,7 @@ Idle sleep preventers: IODisplayWrangler
 
 The "Run at Startup" integrtation works with the Users & Groups system Preferences pane, and will detect when it is changed there.
 
-![screen shot 3](media/ss3.png "screen shot 3")
+<img src="media/ss3.png" width="500"/>
 
 ## Building HalfCaff
 
@@ -101,4 +101,4 @@ into your system python will solve this issue instead of using a virtualenv.
 Instructions on how to do this are not included, and are rather complicated. 
 The binary included in the release directory is a fully standalone HalfCaff.app built with a custom build of Python2.7.12.
 
-![screen shot 4](media/ss4.png "screen shot 4")
+<img src="media/ss4.png" width="400"/>
