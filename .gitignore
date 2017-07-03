@@ -46,6 +46,11 @@ coverage.xml
 *,cover
 .hypothesis/
 
+build/
+dist/
+*.app
+.DS_Store
+
 # Translations
 *.mo
 *.pot
@@ -83,6 +88,7 @@ celerybeat-schedule
 .venv/
 venv/
 ENV/
+*.env
 
 # Spyder project settings
 .spyderproject
