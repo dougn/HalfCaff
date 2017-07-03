@@ -101,3 +101,4 @@ into your system python will solve this issue instead of using a virtualenv.
 Instructions on how to do this are not included, and are rather complicated. 
 The binary included in the release directory is a fully standalone HalfCaff.app built with a custom build of Python2.7.12.
 
+![screen shot 4](media/ss4.png "screen shot 4")
