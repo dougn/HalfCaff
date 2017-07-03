@@ -1,5 +1,5 @@
 # HalfCaff
-OSX Status Bar app to keep laptop from sleeping when Cisco VPN is connected
+OSX Status Bar app to keep laptop from sleeping when Cisco VPN is connected.
 
 ![screen shot 1](media/ss1.png "screen shot 1") ![screen shot 2](media/ss2.png "screen shot 2")
 
@@ -9,12 +9,18 @@ It does not change the sleep setting on OSX when connected and as a result, when
 VPN is disconnected. This can be a real pain with the 2FA token.
 
 There are plenty of tools (Cafeine, caffeinate, etc) which will work on the commandline or provide a nice status bar
-for setting the amount of time to keep the system awake for. This was an excuse to learn some new tools and accessing Coacoa
-from Python. The end result is more useful to me than all the other tools.
+for setting the amount of time to keep the system awake for, but none which will monitor network activity or provide 
+a plugin interface. This started as an excuse to learn [rumps](https://rumps.readthedocs.io/) and accessing Coacoa from python using pyobjc, but quickly developed into a fully functional application.
 
-The statusbar will detect when a VPN connection is active, and it will provide the option to keep the system from entering
-idle (but will still have hte screen turn timeout and lock.) There are options to 'auto-enable' the sleep prevention on VPN
-conneciton, and starting HalfCaff on login. Options are presistent and stored in 
+HalfCaff will detect when a VPN connection is active, and provide the option to keep the system from entering
+idle, but will still have the screen turn timeout and lock. When the VPN connection ends, or is dropped due to 
+remote side issues, HalfCaff will detect this and disable the idle sleep protection. 
+
+The only subprocess work is for checking the VPN connection status which uses the Cisco VPN client application. 
+This is polled ever 2.5 minuites, and this polling interval can be configured. This interval was selected to ensure that a new VPN connection would be detected before the default idle sleep period would be encountered. All other system interactions are performed directly through Coacoa, AppKit, IOKit and the Framework pyobjc interfaces.
+
+There are options to 'auto-enable' the idle sleep prevention on VPN conneciton, and for starting HalfCaff on login. 
+Options are presistent and stored in 
 ~/Library/Application Support/HalfCaff/options.json
 
 There are two hidden options only available in the json file, the vpn client path, and the polling inerval:
