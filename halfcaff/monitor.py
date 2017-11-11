@@ -25,3 +25,7 @@ def connected(vpncli):
     vpn = delegator.run(vpncli + ' state')
     found = _re_connected.findall(vpn.out)
     return bool(found)
+
+def timemachine_running():
+    tmstate = delegator.run('tmutil currentphase')
+    return tmstate.out.strip() != 'BackupNotRunning'

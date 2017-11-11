@@ -13,7 +13,7 @@ import halfcaff.util
 import halfcaff.version
 
 _message = """\
-Prevent OSX from Sleeping when Cisco VPN is connected.
+Prevent OSX from Sleeping when Cisco VPN is connected or TimeMachine is backing up or verifying.
 
 %(copyright)s
 """ % dict(

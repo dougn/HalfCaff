@@ -1,10 +1,10 @@
 # HalfCaff ![](media/halfcaff_disabled.iconset/icon_32x32.png) ![](media/halfcaff_off.iconset/icon_32x32.png) ![](media/halfcaff_on.iconset/icon_32x32.png)
-OSX Status Bar app to keep laptop from sleeping when Cisco VPN is connected.
+OSX Status Bar app to keep laptop from sleeping when Cisco VPN is connected or TimeMachine is backing up.
 
 Building a full standalone app using [py2app](https://py2app.readthedocs.io/) can be complicated. 
 For that reason a fully standalone version of the app is
 released in the project and can be downloaded here: 
-[HalfCaff-0.1.zip](https://github.com/dougn/HalfCaff/raw/master/release/HalfCaff-0.1.zip).
+[HalfCaff-1.0.zip](https://github.com/dougn/HalfCaff/raw/master/release/HalfCaff-1.0.zip).
 The only dependency is having Cisco AnyConnect installed.
 You can download, unzip, and move HalfCaff.app to your Applications folder to install. 
 HalfCaff has been tested on OSX 10.10 through OSX 10.12, but should work with older OSX 10 systems.
@@ -38,12 +38,16 @@ There are options to 'auto-enable' the idle sleep prevention on VPN conneciton, 
 Options are presistent and stored in 
 ~/Library/Application Support/HalfCaff/options.json
 
-There are two hidden options only available in the json file, the vpn client path, and the polling inerval:
+There are four hidden options only available in the json file, the vpn client path, the polling inerval, and
+enabling/disabling either VPN or TimeMachine monitoring:
 
 ```json
-{"vpncli": "/opt/cisco/anyconnect/bin/vpn", 
- "monitor_interval": 150, 
- "auto_caffeinate": false}
+{"vpncli" : '/opt/cisco/anyconnect/bin/vpn',
+ "monitor_interval" : 150,
+ "monitor_timemachine" = true,
+ "monitor_vpn = true,
+ "auto_caffeinate_vpn = false,
+ "auto_caffeinate_timemachine = false}
 ```
 
 You can see the sleep prevention in action using pmset:
@@ -61,7 +65,7 @@ Assertion status system-wide:
    PreventUserIdleSystemSleep     1
    NetworkClientActive            0
 Listed by owning process:
-   pid 51669(HalfCaff): [0x000f6e9d0001a347] 00:00:15 NoIdleSleepAssertion named: "HalfCaff - VPN live connection" 
+   pid 51669(HalfCaff): [0x000f6e9d0001a347] 00:00:15 NoIdleSleepAssertion named: "HalfCaff - VPN connection" 
    pid 96(hidd): [0x000f56ca0009a096] 01:41:53 UserIsActive named: "com.apple.iohideventsystem.queue.tickle.4295159470.11" 
 	Timeout will fire in 595 secs Action=TimeoutActionRelease
 Kernel Assertions: 0x100=MAGICWAKE

@@ -6,7 +6,10 @@ import halfcaff.util
 DEFAULTS = jsontree.jsontree(
     vpncli = '/opt/cisco/anyconnect/bin/vpn',
     monitor_interval = int(60*2.5), # 2.5min
-    auto_caffeinate = False
+    monitor_timemachine = True,
+    monitor_vpn = True,
+    auto_caffeinate_vpn = False,
+    auto_caffeinate_timemachine = False
 )
 
 def load_options(app):
@@ -23,6 +26,12 @@ def load_options(app):
         if timer:
             timer.interval = options.monitor_interval
     app.options = options
+    if 'auto_caffeinate' in options:
+        # old version
+        options['auto_caffeinate_vpn'] = options['auto_caffeinate']
+        options['auto_caffeinate_timemachine'] = options['auto_caffeinate']
+        del options['auto_caffeinate']
+        save_options(app)
     return options
 
 def save_options(app):

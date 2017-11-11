@@ -18,9 +18,10 @@ import halfcaff.power
 
 
 _MENU_TITLES = jsontree.jsontree(
-    Control = ["Caffeinate", "Decaffeinate", "No VPN Connection (disabled)"],
+    Control = ["Caffeinate", "Decaffeinate", "No VPN or TimeMachine (disabled)"],
     Options = jsontree.jsontree(
-        Auto  = "Auto Caffeinate on VPN Connection",
+        AutoVPN  = "Auto Caffeinate on VPN Connection",
+        AutoTM   = "Auto Caffeinate on Time Machine Backup",
         Login = "Run at Startup"
     ),
     About = "About",
@@ -56,6 +57,7 @@ class HalfCaff(rumps.App):
             rumps.separator,
             "About"]
         
+        self.reason = 'HalfCaff'
         self.initialized = False
         self.caffeinated = False
         self.enabled = False
@@ -66,10 +68,16 @@ class HalfCaff(rumps.App):
     def about(self, sender):
         halfcaff.about.window.run()
     
-    @rumps.clicked("Options", "Auto")
-    def option_auto(self, sender):
-        self.options.auto_caffeinate = not self.options.auto_caffeinate
-        sender.state = int(self.options.auto_caffeinate)
+    @rumps.clicked("Options", "AutoVPN")
+    def option_auto_vpn(self, sender):
+        self.options.auto_caffeinate_vpn = not self.options.auto_caffeinate_vpn
+        sender.state = int(self.options.auto_caffeinate_vpn)
+        halfcaff.options.save_options(self)
+
+    @rumps.clicked("Options", "AutoTM")
+    def option_auto_tm(self, sender):
+        self.options.auto_caffeinate_timemachine = not self.options.auto_caffeinate_timemachine
+        sender.state = int(self.options.auto_caffeinate_timemachine)
         halfcaff.options.save_options(self)
         
     @rumps.clicked("Options", "Login")
@@ -98,7 +106,8 @@ class HalfCaff(rumps.App):
         if self.initialized:
             return
         self.jtmenu = _initialize_jtmenu(self.menu, _MENU_TITLES)
-        self.jtmenu.Options.Auto.state=int(self.options.auto_caffeinate)
+        self.jtmenu.Options.AutoVPN.state=int(self.options.auto_caffeinate_vpn)
+        self.jtmenu.Options.AutoTM.state=int(self.options.auto_caffeinate_timemachine)
         self.quit_button.set_callback(self.finalize)
         self.update_control_state(-1)
         self.initialized = True
@@ -109,7 +118,7 @@ class HalfCaff(rumps.App):
             self.initialized = False
         rumps.quit_application(sender)
     
-    def update_control_state(self, state=None):
+    def update_control_state(self, state=None, reason=None):
         control = self.jtmenu.Control
         if state in (0, 1, -1, False, True):
             control.state_hidden = int(state)
@@ -127,29 +136,59 @@ class HalfCaff(rumps.App):
             control.set_callback(self.control)
             if self.caffeinated:
                 ## activate caffeinate
-                self.power.caffeinate()
+                self.power.caffeinate(reason=reason)
             else:
                 ## deactivate caffeinate
                 self.power.decaffeinate()
 
     @rumps.clicked("Control")
     def control(self, sender):
-        self.update_control_state(not sender.state_hidden)
+        self.update_control_state(not sender.state_hidden, self.reason + ' (hard set)')
         
     @rumps.timer(halfcaff.options.DEFAULTS.monitor_interval)
     def monitor(self, timer):
+        if not self.options.monitor_vpn and not self.options.monitor_timemachine:
+            ## turn into a dialog error!!
+            rumps.alert('Bad Options',
+                        'Both VPN and TimeMachine monitoring are disabled in options file!\n' +
+                        'We will enable TimeMachine monitoring now, as a minimal support feature.',
+                        ok=True)
+            self.options.monitor_timemachine = True
+            halfcaff.options.save_options(self)
         try:
             if not self.initialized:
                 self.initialize()
             self.update_run_at_login()
-            connected = halfcaff.monitor.connected(self.options.vpncli)
-            if not connected and self.enabled:
+            connected, backingup = False, False
+            if self.options.monitor_vpn:
+                try:
+                    connected = halfcaff.monitor.connected(self.options.vpncli)
+                except:
+                    rumps.alert('VPN Client Failure',
+                                'The Cisco VPN Client could not be found or errored.\n'
+                                'VPN Monitoring will be disabled.\n\n'
+                                'Please check your configuration in:\n'
+                                '    ~/Library/Application Support/HalfCaff/options.json',
+                                ok=True)
+                    self.options.monitor_vpn = False
+            halfcaff.options.save_options(self)
+            if self.options.monitor_timemachine:
+                backingup = halfcaff.monitor.timemachine_running()
+            if connected:
+                self.reason = 'HalfCaff - VPN connection'
+            elif backingup:
+                self.reason = 'HalfCaff - TimeMachine backup'
+            else:
+                self.reason = 'HalfCaff'
+            if not connected and not backingup and self.enabled:
                 self.update_control_state(-1)
             elif not self.enabled and connected:
-                self.update_control_state(self.options.auto_caffeinate)
+                self.update_control_state(self.options.auto_caffeinate_vpn, self.reason)
+            elif not self.enabled and backingup:
+                self.update_control_state(self.options.auto_caffeinate_timemachine, self.reason)
         except:
             pass
-            print sys.exc_info()
+            #print sys.exc_info()
 
 
     
