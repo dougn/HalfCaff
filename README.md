@@ -44,10 +44,10 @@ enabling/disabling either VPN or TimeMachine monitoring:
 ```json
 {"vpncli" : '/opt/cisco/anyconnect/bin/vpn',
  "monitor_interval" : 150,
- "monitor_timemachine" = true,
- "monitor_vpn = true,
- "auto_caffeinate_vpn = false,
- "auto_caffeinate_timemachine = false}
+ "monitor_timemachine" : true,
+ "monitor_vpn" : true,
+ "auto_caffeinate_vpn" : false,
+ "auto_caffeinate_timemachine" : false}
 ```
 
 You can see the sleep prevention in action using pmset:
